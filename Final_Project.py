@@ -32,22 +32,16 @@ print(response_json)
 for key, value in response_json.items():
     print(key + ':', value)
 
-# First, make empty lists (i.e. set equal to []) for close_price, close_datetime, symbol
-exchange_rate = []
-rate_datetime = []
-symbol = []
-
-# for loop for looping through every element in response_JSON's list.
-# Pull out the date, close price, and symbol in list,
-# Use the .append() to add values to empty lists
+#
 import datetime
 from datetime import datetime
 latest_rate_values = (response_json['rates'])
-print(latest_rate_values)# Print data_values
+#print(latest_rate_values)# Print data_values
 
+#convert keys and values into individual lists
 symbol = list(latest_rate_values.keys())
 exchange_rate = list(latest_rate_values.values())
-print(symbol, exchange_rate)
+#print(symbol, exchange_rate)
 
 rate_date = []
 for key in latest_rate_values:
@@ -55,5 +49,16 @@ for key in latest_rate_values:
     #print(close_datetime)  # Print close_datetime
 print(rate_date) # Print type of time_time
 
-latest_ex_rates = [[symbol],[exchange_rate],[rate_date]]
-print(latest_ex_rates)
+import pandas as pd
+
+latest_ex_rates_pd = pd.DataFrame({'symbol':[],'exchange_rate':[],'rate_date':[]}) # create an empty dataframe
+# Make the column symbol equal to the list symbol
+latest_ex_rates_pd['symbol'] = symbol
+#print(mtbstock_pd)
+# Make the column exchange_rate equal to the list exchange_rate
+latest_ex_rates_pd['exchange_rate'] = exchange_rate
+#print(mtbstock_pd)
+# Make the column rate_date equal to the list rate_date
+latest_ex_rates_pd['rate_date'] = rate_date
+# print the DataFrame
+print(latest_ex_rates_pd)
