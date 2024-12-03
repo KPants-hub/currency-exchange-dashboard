@@ -91,7 +91,7 @@ response_json = r.json()
 print(response_json)
 
 historic_dates = []
-historic_rate_data = [[]]
+historic_rate_data = []
 for key in response_json['rates'].items():
     historic_dates.append(key)
     historic_rate_data.append(value)
