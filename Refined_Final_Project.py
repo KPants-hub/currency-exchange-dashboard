@@ -23,7 +23,7 @@ def fetch_latest_rates(api_key):
         pd.DataFrame: A DataFrame containing the latest exchange rates.
     """
     url = 'http://data.fixer.io/api/latest'
-    querystring = {"access_key": api_key, "base": "USD"}
+    querystring = {"access_key": api_key, "base": "USD", "symbols":"EUR,JPY,GBP,AUD,CAD,DEM,INR,MXN,RUB,CNY"}
 
     # Make the API call
     response = requests.get(url, params=querystring)
@@ -35,22 +35,27 @@ def fetch_latest_rates(api_key):
 
     # Extract exchange rates
     latest_rate_values = response_json.get('rates', {})
+    latest_rate_date = response_json.get('date', {})
     if not latest_rate_values:
         print("\nError: No rates data found in the response.")
         return None
+    # Extract latest exchange date
+    rate_date = []
+    for key in latest_rate_values:
+        rate_date.append(latest_rate_date)
+        if not latest_rate_date:
+            print("\nError: No rates date found in the response.")
+            return None
 
     # Convert the currency symbols and their exchange rates into lists
     symbols = list(latest_rate_values.keys())
     exchange_rates = list(latest_rate_values.values())
 
-    # Add the current date to all records
-    rate_dates = [datetime.date.today()] * len(symbols)
-
     # Create a DataFrame
     latest_rates_df = pd.DataFrame({
         'symbol': symbols,
         'exchange_rate': exchange_rates,
-        'rate_date': rate_dates
+        'rate_date': rate_date
     })
 
     print("\nLatest Exchange Rates DataFrame:")
@@ -59,7 +64,7 @@ def fetch_latest_rates(api_key):
     return latest_rates_df
 
 # Define function to retrieve historical exchange rate data
-def fetch_historical_data(api_key, base_currency, start_date, end_date):
+def fetch_historical_data(api_key, base_currency, start_date, end_date, symbols):
     """
     Fetches historical exchange rates from the Fixer.io API for a given date range.
 
@@ -77,7 +82,8 @@ def fetch_historical_data(api_key, base_currency, start_date, end_date):
         "access_key": api_key,
         "start_date": start_date,
         "end_date": end_date,
-        "base": base_currency
+        "base": base_currency,
+        "symbols": symbols
     }
 
     # Make the API call
@@ -137,7 +143,8 @@ if __name__ == "__main__":
     start_date = "2020-03-01"
     end_date = "2021-03-01"
     base_currency = "USD"
-    historical_exchange_data = fetch_historical_data(apikey, base_currency, start_date, end_date)
+    symbols = "EUR,JPY, GBP,AUD,CAD,DEM,INR,MXN,RUB,CNY"
+    historical_exchange_data = fetch_historical_data(apikey, base_currency, start_date, end_date, symbols)
 
     # Perform analysis if historical data is retrieved
     if historical_exchange_data is not None:
