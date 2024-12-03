@@ -1,165 +1,118 @@
-# Refined_Final_Project.py
-# This file contains an improved version of the original code with more comments
-# and functionality additions.
 
-# Import required libraries
-import requests  # For making API calls
-import datetime  # For handling date-related tasks
-from datetime import datetime
-import pandas as pd  # For creating and manipulating data structures like DataFrame
+# API directions from website
+# #import requests
+#url = "https://data.fixer.io/api/timeseries?access_key={PASTE_YOUR_API_KEY_HERE}"
+#querystring = {"symbols":"USD,EUR","start_date":"2012-05-01","end_date"="2012-05-25"}
+##response = requests.get(url, params=querystring)
+#Parameter	Description
+#access_key	[required] Your API Key.
+#start_date	[required] The start date of your preferred timeframe.
+#end_date	[required] The end date of your preferred timeframe.
+#base	[optional] Enter the three-letter currency code of your preferred base currency.
+#symbols	[optional] Enter a list of comma-separated currency codes to limit output currencies.
 
-# Set up API key
-apikey = '7bf403592be68c3af0287ed3ab4a19ac'  # Replace with your actual API key
+#First get most recent exchange rates relative to USD
+import requests
+# For this project, access the API and pull data.
+apikey = '7bf403592be68c3af0287ed3ab4a19ac'
+# url to return records for exchange rates
+url = 'http://data.fixer.io/api/latest?access_key=7bf403592be68c3af0287ed3ab4a19ac'
+# Identify parameters for the data we want to return
+# For Base currency of USD return the latest conversion rate for the following :
+# Europe, Japan, Great Britian, Australia, Canada, Germany, India, Mexico, Russia, China
+querystring = {"base":"USD", "symbols":"EUR,JPY,GBP,AUD,CAD,DEM,INR,MXN,RUB,CNY"}
+# Packages the requests, sends it, and catches the response all in one function
+r = requests.get(url, params=querystring)
+#r = requests.get(url, params=querystring)
+# Then use the text attribute of r to read it as a string
+response_json = r.json()
+# Print response_json
+print(response_json)
 
-# Define function to retrieve the latest exchange rates
-def fetch_latest_rates(api_key):
-    """
-    Fetches the latest exchange rates from the Fixer.io API.
-
-    Parameters:
-        api_key (str): API key for authentication.
-
-    Returns:
-        pd.DataFrame: A DataFrame containing the latest exchange rates.
-    """
-    url = 'http://data.fixer.io/api/latest'
-    querystring = {"access_key": api_key, "base": "USD"}
-
-    # Make the API call
-    response = requests.get(url, params=querystring)
-    response_json = response.json()
-
-    # Debugging: Print the full JSON response
-    print("Full JSON Response:")
-    print(response_json)
-
-    # Extract exchange rates
-    latest_rate_values = response_json.get('rates', {})
-    if not latest_rate_values:
-        print("\nError: No rates data found in the response.")
-        return None
-    # Extract exchange rates
-    latest_rate_date = response_json.get('date', {})
-    if not latest_rate_values:
-    print("\nError: No rates data found in the response.")
-        return None
+# convert keys
+for key, value in response_json.items():
+    print(key + ':', value)
 
 
-    # Convert the currency symbols and their exchange rates into lists
-    symbols = list(latest_rate_values.keys())
-    exchange_rates = list(latest_rate_values.values())
+# create dict for rates
+latest_rate_values = (response_json['rates'])
+# print the data associated with the rate
+print(type(latest_rate_values))
+latest_rate_date = (response_json['date'])
+# print the date associated with the rate
+print(latest_rate_date)
 
-    # Add the current date to all records
-    # create empty list to append rate date
-    rate_date = []
-    # loop through the rate data to append the date for each record
-    for key in latest_rate_values:
+# create list of rate keys
+symbol = list(latest_rate_values.keys())
+# create list of rate values
+exchange_rate = list(latest_rate_values.values())
+print(symbol, exchange_rate)
+
+import datetime
+#create empty list to append rate date
+rate_date = []
+# loop through the rate data to append the date for each record
+for key in latest_rate_values:
     rate_date.append(latest_rate_date)
-    print(rate_date)  # Print type of time_time
+print(rate_date) # Print type of time_time
 
-    # Create a DataFrame
-    latest_rates_df = pd.DataFrame({
-        'symbol': symbols,
-        'exchange_rate': exchange_rates,
-        'rate_date': rate_date
-    })
+import pandas as pd
 
-    print("\nLatest Exchange Rates DataFrame:")
-    print(latest_rates_df)
+# create an empty dataframe
+latest_ex_rates_pd = pd.DataFrame({'symbol':[],'exchange_rate':[],'rate_date':[]})
+# Make the column symbol equal to the list symbol
+latest_ex_rates_pd['symbol'] = symbol
 
-        return latest_rates_df
+# Make the column exchange_rate equal to the list exchange_rate
+latest_ex_rates_pd['exchange_rate'] = exchange_rate
 
-# Define function to retrieve historical exchange rate data
-def fetch_historical_data(api_key, base_currency, start_date, end_date):
-    """
-    Fetches historical exchange rates from the Fixer.io API for a given date range.
+# Make the column rate_date equal to the list close_datetime
+latest_ex_rates_pd['rate_date'] = rate_date
+# print the DataFrame
+print(latest_ex_rates_pd)
 
-    Parameters:
-        api_key (str): API key for authentication.
-        base_currency (str): Base currency for exchange rates.
-        start_date (str): Start date in 'YYYY-MM-DD' format.
-        end_date (str): End date in 'YYYY-MM-DD' format.
 
-    Returns:
-        pd.DataFrame: A DataFrame containing historical exchange rates.
-    """
-    url = 'http://data.fixer.io/api/timeseries'
-    querystring = {
-        "access_key": api_key,
-        "start_date": start_date,
-        "end_date": end_date,
-        "base": base_currency
-    }
 
-    # Make the API call
-    response = requests.get(url, params=querystring)
-    response_json = response.json()
+#Get historic exchange rates relative to USD
+import requests
+# For this project, access the API and pull data.
+apikey = '7bf403592be68c3af0287ed3ab4a19ac'
+# url to return records for exchange rates
+url = 'https://data.fixer.io/api/timeseries?access_key=7bf403592be68c3af0287ed3ab4a19ac'
+# Identify parameters for the data we want to return
+# For Base currency of USD return the historic conversion rate from 2020-01-01 to 2021-01-01 for the following :
+# Europe, Japan, Great Britian, Australia, Canada, Germany, India, Mexico, Russia, China
+querystring = {"base":"USD", "symbols":"EUR,JPY,GBP,AUD,CAD,DEM,INR,MXN,RUB,CNY", "start_date":"2020-01-01","end_date":"2021-01-01"}
+# Packages the requests, sends it, and catches the response all in one function
+r = requests.get(url, params=querystring)
+# Then use the text attribute of r to read it as a string
+response_json = r.json()
+# Print response_json
+print(response_json)
 
-    # Check for successful API call
-    if response_json.get('success', False):
-        historical_rates = response_json.get('rates', {})
-        historical_df = pd.DataFrame.from_dict(historical_rates, orient='index')
-        historical_df.index.name = 'date'
-        historical_df.reset_index(inplace=True)
-        historical_df['base_currency'] = base_currency
+historic_dates = []
+historic_rate_data = []
+for key in response_json['rates'].items():
+    historic_dates.append(key)
+    historic_rate_data.append(value)
+print(historic_dates)
+print(historic_rate_data)
+print(type(historic_rate_data))
 
-        print("\nHistorical Exchange Rates DataFrame:")
-        print(historical_df)
+historic_rate_sym = list(historic_rate_data[0].keys())
+print(historic_rate_sym)
 
-        return historical_df
-    else:
-        print("\nError: Failed to retrieve historical data.")
-        print("Message:", response_json.get('error', {}).get('info', 'Unknown error'))
-        return None
+need to get the value for each symbol?????
 
-# Define function to calculate KPIs
-def calculate_kpis(df):
-    """
-    Calculates key performance indicators (KPIs) such as max, min, and fluctuation for each currency.
+# create an empty dataframe
+historic_ex_rates_pd = pd.DataFrame({'historic_symbol':[],'historic_exchange_rate':[],'historic_dates':[]})
+# Make the column symbol equal to the list symbol
+historic_ex_rates_pd['historic_symbol'] = symbol
 
-    Parameters:
-        df (pd.DataFrame): DataFrame containing historical exchange rates.
+# Make the column exchange_rate equal to the list exchange_rate
+historic_ex_rates_pd['historic_exchange_rate'] = exchange_rate
 
-    Returns:
-        pd.DataFrame: A summary DataFrame with max_rate, min_rate, and fluctuation for each currency.
-    """
-    rate_columns = df.columns.difference(['date', 'base_currency'])
-    max_rates = df[rate_columns].max()
-    min_rates = df[rate_columns].min()
-    fluctuations = max_rates - min_rates
-
-    kpi_summary = pd.DataFrame({
-        'max_rate': max_rates,
-        'min_rate': min_rates,
-        'fluctuation': fluctuations
-    })
-    kpi_summary.index.name = 'currency'
-
-    return kpi_summary
-
-# Main section to execute the script
-if __name__ == "__main__":
-    # Fetch the latest exchange rates
-    print("\nFetching latest exchange rates...")
-    latest_rates_df = fetch_latest_rates(apikey)
-
-    # Fetch historical exchange rate data
-    print("\nFetching historical exchange rate data...")
-    start_date = "2020-03-01"
-    end_date = "2021-03-01"
-    base_currency = "USD"
-    historical_exchange_data = fetch_historical_data(apikey, base_currency, start_date, end_date)
-
-    # Perform analysis if historical data is retrieved
-    if historical_exchange_data is not None:
-        print("\nBasic Statistics for Historical Data:")
-        print(historical_exchange_data.describe())
-
-        # Calculate KPIs
-        kpi_summary = calculate_kpis(historical_exchange_data)
-        print("\nKey Performance Indicators (KPIs):")
-        print(kpi_summary)
-
-        # Save KPIs to a CSV file
-        kpi_summary.to_csv("kpi_summary.csv", index=True)
-        print("\nKPI summary saved to 'kpi_summary.csv'.")
+# Make the column rate_date equal to the list close_datetime
+historic_ex_rates_pd['historic_dates'] = historic_dates
+# print the DataFrame
+print(historic_ex_rates_pd)
