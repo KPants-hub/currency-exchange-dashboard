@@ -38,25 +38,36 @@ def fetch_latest_rates(api_key):
     if not latest_rate_values:
         print("\nError: No rates data found in the response.")
         return None
+    # Extract exchange rates
+    latest_rate_date = response_json.get('date', {})
+    if not latest_rate_values:
+    print("\nError: No rates data found in the response.")
+        return None
+
 
     # Convert the currency symbols and their exchange rates into lists
     symbols = list(latest_rate_values.keys())
     exchange_rates = list(latest_rate_values.values())
 
     # Add the current date to all records
-    rate_dates = [datetime.date.today()] * len(symbols)
+    # create empty list to append rate date
+    rate_date = []
+    # loop through the rate data to append the date for each record
+    for key in latest_rate_values:
+    rate_date.append(latest_rate_date)
+    print(rate_date)  # Print type of time_time
 
     # Create a DataFrame
     latest_rates_df = pd.DataFrame({
         'symbol': symbols,
         'exchange_rate': exchange_rates,
-        'rate_date': rate_dates
+        'rate_date': rate_date
     })
 
     print("\nLatest Exchange Rates DataFrame:")
     print(latest_rates_df)
 
-    return latest_rates_df
+        return latest_rates_df
 
 # Define function to retrieve historical exchange rate data
 def fetch_historical_data(api_key, base_currency, start_date, end_date):
