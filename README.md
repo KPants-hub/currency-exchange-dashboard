@@ -21,11 +21,11 @@ The **Currency Exchange Dashboard** is a user-friendly web application that prov
 - **API Integration**: Exchange rate data from [Fixer.io-API](http://data.fixer.io/api/)
 - **Dashboard**: Created using Dash App
 - **Libraries**:
-  | import requests |
-  | import datetime |
-  | import pandas |
-  | import dash |
-  | import plotly|
+  || import requests ||
+  || import datetime ||
+  || import pandas ||
+  || import dash ||
+  || import plotly||
 
 ---
 
