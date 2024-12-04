@@ -7,6 +7,7 @@ import requests  # For making API calls
 import datetime  # For handling date-related tasks
 from datetime import datetime
 import pandas as pd  # For creating and manipulating data structures like DataFrame
+from IPython.external.qt_loaders import commit_api
 
 # Set up API key
 apikey = '7bf403592be68c3af0287ed3ab4a19ac'  # Replace with your actual API key
