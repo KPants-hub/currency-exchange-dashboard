@@ -26,16 +26,25 @@ def get_conversion_rate(base_currency, target_currency, rates_df):
         return target_to_usd * base_to_usd
 
 # App Layout
-app.layout = html.Div(style={'font-family': 'Arial, sans-serif'}, children=[
+app.layout = html.Div(style={
+    'font-family': 'Arial, sans-serif',
+    'background': 'linear-gradient(to bottom, #f0f8ff, #e6f7ff)',
+    'padding': '10px'
+}, children=[
     # Header Section
     html.Div([
-        html.H1("Exchange Rates Dashboard", style={'text-align': 'center', 'margin-bottom': '20px'}),
-    ], style={'background-color': '#f8f9fa', 'padding': '20px', 'border-bottom': '2px solid #ddd'}),
+        html.H1("Exchange Rates Dashboard", style={
+            'text-align': 'center',
+            'margin': '0',
+            'padding': '10px',
+            'font-size': '24px',
+        }),
+    ], style={'background-color': '#f8f9fa', 'padding': '10px', 'border-bottom': '2px solid #ddd'}),
 
     # Dropdowns and KPIs Section
     html.Div([
         html.Div([
-            html.Label("Select Base Currency:"),
+            html.Label("Select Base Currency:", style={'font-weight': 'bold'}),
             dcc.Dropdown(
                 id='base-currency',
                 options=[
@@ -45,7 +54,7 @@ app.layout = html.Div(style={'font-family': 'Arial, sans-serif'}, children=[
                 ],
                 value='USD'  # Default value
             ),
-            html.Label("Select Target Currency:"),
+            html.Label("Select Target Currency:", style={'font-weight': 'bold', 'margin-top': '10px'}),
             dcc.Dropdown(
                 id='target-currency',
                 options=[
@@ -55,19 +64,31 @@ app.layout = html.Div(style={'font-family': 'Arial, sans-serif'}, children=[
                 ],
                 value='INR'  # Default value
             ),
-        ], style={'width': '30%', 'padding': '10px', 'background-color': '#ffffff', 'border-radius': '8px',
-                  'box-shadow': '2px 2px 5px rgba(0, 0, 0, 0.1)', 'margin': '10px'}),
+        ], style={
+            'width': '30%',
+            'padding': '15px',
+            'background-color': '#ffffff',
+            'border-radius': '8px',
+            'box-shadow': '2px 2px 5px rgba(0, 0, 0, 0.1)',
+            'margin': '10px'
+        }),
 
-        html.Div(id='kpi-section', style={'width': '30%', 'padding': '10px', 'background-color': '#f8f9fa',
-                                          'border-radius': '8px', 'box-shadow': '2px 2px 5px rgba(0, 0, 0, 0.1)',
-                                          'margin': '10px', 'text-align': 'center'}),
+        html.Div(id='kpi-section', style={
+            'width': '30%',
+            'padding': '15px',
+            'background-color': '#ffffff',
+            'border-radius': '8px',
+            'box-shadow': '2px 2px 5px rgba(0, 0, 0, 0.1)',
+            'margin': '10px',
+            'text-align': 'center'
+        }),
     ], style={'display': 'flex', 'justify-content': 'space-around', 'align-items': 'center'}),
 
     # Conversion and Graph Section
     html.Div([
-        html.H3(id='conversion-result', style={'text-align': 'center', 'margin-top': '20px'}),
-        dcc.Graph(id='exchange-graph', style={'height': '400px'}),
-    ], style={'margin-top': '20px'}),
+        html.H3(id='conversion-result', style={'text-align': 'center', 'margin-top': '10px'}),
+        dcc.Graph(id='exchange-graph', style={'height': '400px', 'margin': '0 auto'}),  # Reduced height
+    ], style={'margin-top': '10px', 'padding-bottom': '10px'}),
 
     # Footer Section
     html.Div([
