@@ -61,6 +61,10 @@ def fetch_latest_rates(api_key):
     print("\nLatest Exchange Rates DataFrame:")
     print(latest_rates_df)
 
+    # Save Latest Exchange Rates DataFrame save to latest_rates_df.csv
+    latest_rates_df.to_csv('latest_rates_df.csv')
+    print("\nLatest Exchange Rates DataFrame saved to 'latest_rates_df.csv'.")
+
     return latest_rates_df
 
 # Define function to retrieve historical exchange rate data
@@ -101,11 +105,16 @@ def fetch_historical_data(api_key, base_currency, start_date, end_date, symbols)
         print("\nHistorical Exchange Rates DataFrame:")
         print(historical_df)
 
+        # Save Historical Exchange Rates DataFrame save to historic_ex_rate_df.csv
+        historical_df.to_csv('historic_ex_rate_df.csv')
+        print("\nHistorical Exchange Rates DataFrame saved to 'historic_ex_rate_df.csv'.")
+
         return historical_df
     else:
         print("\nError: Failed to retrieve historical data.")
         print("Message:", response_json.get('error', {}).get('info', 'Unknown error'))
         return None
+    response.close()
 
 # Define function to calculate KPIs
 def calculate_kpis(df):
@@ -143,13 +152,17 @@ if __name__ == "__main__":
     start_date = "2020-03-01"
     end_date = "2021-03-01"
     base_currency = "USD"
-    symbols = "EUR,JPY, GBP,AUD,CAD,DEM,INR,MXN,RUB,CNY"
+    symbols = "EUR,JPY,GBP,AUD,CAD,DEM,INR,MXN,RUB,CNY"
     historical_exchange_data = fetch_historical_data(apikey, base_currency, start_date, end_date, symbols)
 
     # Perform analysis if historical data is retrieved
     if historical_exchange_data is not None:
         print("\nBasic Statistics for Historical Data:")
         print(historical_exchange_data.describe())
+
+        # Save Basic Stats Descr to historic_basic_stats.csv
+        (historical_exchange_data.describe()).to_csv("historic_basic_stats.csv", index=True)
+        print("\nBasic Statistics for Historical Data save to 'historic_basic_stats.csv'.")
 
         # Calculate KPIs
         kpi_summary = calculate_kpis(historical_exchange_data)
