@@ -29,49 +29,19 @@ The **Currency Exchange Dashboard** is a user-friendly web application that prov
 
 ---
 
-## Installation
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/your-username/currency-exchange-dashboard.git
-   cd currency-exchange-dashboard
-   ```
-
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-
-3. **Configure environment variables**:
-   Create a `.env` file in the root directory with the following variables:
-   ```env
-   API_KEY=your_api_key_here
-   PORT=5000
-   DB_URI=your_mongodb_connection_string
-   ```
-
-4. **Run the application**:
-   ```bash
-   npm start
-   ```
-
-5. Open your browser and navigate to `http://localhost:5000`.
-
----
-
 ## Usage
 
 1. **View Exchange Rates**:
-   Select base and target currencies to view real-time exchange rates.
+   Select base and target currencies to view latest exchange rates.
 
-2. **Convert Currency**:
-   Input an amount in the base currency to see its equivalent in the target currency.
+2. **Explore Historical Data**:
+   Use the charting tool to track historical exchange rates daily changes from 2020-03-01 to 2021-03-01.
 
-3. **Explore Historical Data**:
-   Use the charting tool to track historical exchange rates over days, months, or years.
+3. **View KPIs**:
+   View Key Performance Indicators for currency including High, Low, and Fluctuation.
 
-4. **Save Preferences**:
-   Login to save frequently used currencies for quick access.
+4. **Output Files**:
+   Compile files for further analysis such as daily historic exchange rate, trend statistics for each currency, KPI Summary, and latest rates.
 
 ---
 
@@ -87,21 +57,14 @@ Contributions are welcome! Follow these steps:
 
 ---
 
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
 ## Acknowledgments
 
-- Thanks to [ExchangeRate-API](https://www.exchangerate-api.com/) for providing the data.
-- Inspired by the need for easy and accessible currency exchange tools.
+- Thanks to [Fixer.io-API](http://data.fixer.io/api/) for providing the data.
 
 ---
 
 ## Contact
 
-For questions or feedback, please reach out to [your-email@example.com].
+For questions or feedback, please reach out to Liz Kent or Kavita Pant.
 
 ---
