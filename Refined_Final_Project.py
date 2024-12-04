@@ -153,6 +153,7 @@ def fetch_historic_trend_data(api_key, base_currency, start_date, end_date, symb
         print("\nError: Failed to retrieve historic trend data.")
         print("Message:", response_json.get('error', {}).get('info', 'Unknown error'))
         return None
+    
 
 
 # Define function to calculate KPIs
