@@ -11,19 +11,11 @@ import pandas as pd  # For creating and manipulating data structures like DataFr
 # Set up API key
 apikey = '7bf403592be68c3af0287ed3ab4a19ac'  # Replace with your actual API key
 
+
 # Define function to retrieve the latest exchange rates
 def fetch_latest_rates(api_key):
-    """
-    Fetches the latest exchange rates from the Fixer.io API.
-
-    Parameters:
-        api_key (str): API key for authentication.
-
-    Returns:
-        pd.DataFrame: A DataFrame containing the latest exchange rates.
-    """
     url = 'http://data.fixer.io/api/latest'
-    querystring = {"access_key": api_key, "base": "USD", "symbols":"EUR,JPY,GBP,AUD,CAD,DEM,INR,MXN,RUB,CNY"}
+    querystring = {"access_key": api_key, "base": "USD", "symbols": "EUR,JPY,GBP,AUD,CAD,DEM,INR,MXN,RUB,CNY"}
 
     # Make the API call
     response = requests.get(url, params=querystring)
@@ -61,10 +53,64 @@ def fetch_latest_rates(api_key):
     print("\nLatest Exchange Rates DataFrame:")
     print(latest_rates_df)
 
+    # Save Latest Exchange Rates DataFrame save to latest_rates_df.csv
+    latest_rates_df.to_csv('latest_rates_df.csv')
+    print("\nLatest Exchange Rates DataFrame saved to 'latest_rates_df.csv'.")
+
     return latest_rates_df
+
 
 # Define function to retrieve historical exchange rate data
 def fetch_historical_data(api_key, base_currency, start_date, end_date, symbols):
+    url = 'http://data.fixer.io/api/timeseries'
+    querystring = {
+        "access_key": api_key,
+        "start_date": start_date,
+        "end_date": end_date,
+        "base": base_currency,  # Note: Free tier ignores the 'base' parameter.
+        "symbols": symbols
+    }
+
+    try:
+        # Make the API call
+        response = requests.get(url, params=querystring)
+        response.raise_for_status()  # Raise an error for bad HTTP status codes
+        response_json = response.json()
+
+        if not response_json.get('success', False):
+            print("\nError: Failed to fetch historical data.")
+            print("Message:", response_json.get('error', {}).get('info', 'Unknown error'))
+            return None
+
+        # Extract historical rates
+        historical_rates = response_json.get('rates', {})
+
+        # Transform data into the desired format
+        data = []
+        for date, rates in historical_rates.items():
+            for currency, rate in rates.items():
+                data.append({"date": date, "currency": currency, "rate": rate})
+
+        # Create a DataFrame
+        historical_df = pd.DataFrame(data)
+
+        print("\nFormatted Historical Exchange Rates DataFrame:")
+        print(historical_df)
+
+        # Save DataFrame to CSV
+        historical_df.to_csv('historic_ex_rate_df.csv', index=False)
+        print("\nHistorical Exchange Rates DataFrame saved to 'historic_ex_rate_df.csv'.")
+
+        return historical_df
+
+    except requests.exceptions.RequestException as e:
+        print("\nError: Could not fetch historical data.")
+        print(e)
+        return None
+
+
+# Define function to retrieve historic trend exchange rate data
+def fetch_historic_trend_data(api_key, base_currency, start_date, end_date, symbols):
     """
     Fetches historical exchange rates from the Fixer.io API for a given date range.
 
@@ -92,32 +138,25 @@ def fetch_historical_data(api_key, base_currency, start_date, end_date, symbols)
 
     # Check for successful API call
     if response_json.get('success', False):
-        historical_rates = response_json.get('rates', {})
-        historical_df = pd.DataFrame.from_dict(historical_rates, orient='index')
-        historical_df.index.name = 'date'
-        historical_df.reset_index(inplace=True)
-        historical_df['base_currency'] = base_currency
+        historic_trend_rates = response_json.get('rates', {})
+        historic_trend_df = pd.DataFrame.from_dict(historic_trend_rates, orient='index')
+        historic_trend_df.index.name = 'date'
+        historic_trend_df.reset_index(inplace=True)
+        historic_trend_df['base_currency'] = base_currency
 
-        print("\nHistorical Exchange Rates DataFrame:")
-        print(historical_df)
+        print("\nHistoric Trend Exchange Rates DataFrame:")
+        print(historic_trend_df)
 
-        return historical_df
+        return historic_trend_df
+
     else:
-        print("\nError: Failed to retrieve historical data.")
+        print("\nError: Failed to retrieve historic trend data.")
         print("Message:", response_json.get('error', {}).get('info', 'Unknown error'))
         return None
 
+
 # Define function to calculate KPIs
 def calculate_kpis(df):
-    """
-    Calculates key performance indicators (KPIs) such as max, min, and fluctuation for each currency.
-
-    Parameters:
-        df (pd.DataFrame): DataFrame containing historical exchange rates.
-
-    Returns:
-        pd.DataFrame: A summary DataFrame with max_rate, min_rate, and fluctuation for each currency.
-    """
     rate_columns = df.columns.difference(['date', 'base_currency'])
     max_rates = df[rate_columns].max()
     min_rates = df[rate_columns].min()
@@ -132,6 +171,7 @@ def calculate_kpis(df):
 
     return kpi_summary
 
+
 # Main section to execute the script
 if __name__ == "__main__":
     # Fetch the latest exchange rates
@@ -143,19 +183,39 @@ if __name__ == "__main__":
     start_date = "2020-03-01"
     end_date = "2021-03-01"
     base_currency = "USD"
-    symbols = "EUR,JPY, GBP,AUD,CAD,DEM,INR,MXN,RUB,CNY"
+    symbols = "EUR,JPY,GBP,AUD,CAD,DEM,INR,MXN,RUB,CNY"
     historical_exchange_data = fetch_historical_data(apikey, base_currency, start_date, end_date, symbols)
 
     # Perform analysis if historical data is retrieved
     if historical_exchange_data is not None:
         print("\nBasic Statistics for Historical Data:")
-        print(historical_exchange_data.describe())
+        print(historical_exchange_data)
 
-        # Calculate KPIs
-        kpi_summary = calculate_kpis(historical_exchange_data)
-        print("\nKey Performance Indicators (KPIs):")
-        print(kpi_summary)
+        # Save Basic Stats Descr to historical_exchange_data.csv
+        historical_exchange_data.to_csv("historical_exchange_data", index=True)
+        print("\nBasic Statistics for Historical Data save to 'historical_exchange_data'.")
 
-        # Save KPIs to a CSV file
-        kpi_summary.to_csv("kpi_summary.csv", index=True)
-        print("\nKPI summary saved to 'kpi_summary.csv'.")
+        # Fetch historical exchange rate data
+        print("\nFetching historical exchange rate data...")
+        start_date = "2020-03-01"
+        end_date = "2021-03-01"
+        base_currency = "USD"
+        symbols = "EUR,JPY,GBP,AUD,CAD,DEM,INR,MXN,RUB,CNY"
+        historic_trend_data = fetch_historic_trend_data(apikey, base_currency, start_date, end_date, symbols)
+
+        if historic_trend_data is not None:
+            print("\nBasic Statistics for Historical Data:")
+            print(historic_trend_data.describe())
+
+            # Save Basic Stats Descr to historic_basic_stats.csv
+            (historic_trend_data.describe()).to_csv("historic_trend_stats.csv", index=True)
+            print("\nBasic Statistics for Historical Data save to 'historic_trend_stats.csv'.")
+
+            # Calculate KPIs
+            kpi_summary = calculate_kpis(historic_trend_data)
+            print("\nKey Performance Indicators (KPIs):")
+            print(kpi_summary)
+
+            # Save KPIs to a CSV file
+            kpi_summary.to_csv("kpi_summary.csv", index=True)
+            print("\nKPI summary saved to 'kpi_summary.csv'.")
