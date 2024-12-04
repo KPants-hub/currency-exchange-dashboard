@@ -5,8 +5,8 @@ import pandas as pd
 import plotly.express as px
 
 # Load Data
-latest_rates = pd.read_csv('latest_rates_df.csv')  # Contains current exchange rates
-historical_rates = pd.read_csv('historical_exchange_data.csv')  # Contains historical rates
+latest_rates = pd.read_csv('latest_rates_df.csv')  # Current exchange rates
+historical_rates = pd.read_csv('historical_exchange_data.csv')  # Historical rates
 
 # Initialize Dash app
 app = dash.Dash(__name__)
