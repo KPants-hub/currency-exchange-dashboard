@@ -193,7 +193,7 @@ if __name__ == "__main__":
         print(historical_exchange_data)
 
         # Save Basic Stats Descr to historical_exchange_data.csv
-        historical_exchange_data.to_csv("historical_exchange_data", index=True)
+        historical_exchange_data.to_csv("historical_exchange_data.csv", index=True)
         print("\nBasic Statistics for Historical Data save to 'historical_exchange_data'.")
 
         # Fetch historical exchange rate data
