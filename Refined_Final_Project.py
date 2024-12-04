@@ -63,6 +63,8 @@ def fetch_latest_rates(api_key):
     print(latest_rates_df)
 
     return latest_rates_df
+    #close Api call
+    response.close()
 
 # Define function to retrieve historical exchange rate data
 def fetch_historical_data(api_key, base_currency, start_date, end_date, symbols):
@@ -107,6 +109,9 @@ def fetch_historical_data(api_key, base_currency, start_date, end_date, symbols)
         print("\nError: Failed to retrieve historical data.")
         print("Message:", response_json.get('error', {}).get('info', 'Unknown error'))
         return None
+
+    #close api call
+    response.close()
 
 # Define function to calculate KPIs
 def calculate_kpis(df):
@@ -162,5 +167,3 @@ if __name__ == "__main__":
         print("\nKPI summary saved to 'kpi_summary.csv'.")
 
 
-
-        i want to commit_api()
