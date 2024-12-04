@@ -11,7 +11,7 @@ The **Currency Exchange Dashboard** is a user-friendly web application that prov
 
 - **Latest Exchange Rates**: Get updated currency rates from reliable APIs.
 - **Historical Data Charts**: Visualize exchange rate trends over customizable time periods.
-- **Favorite Currencies**: Save and prioritize frequently used currencies.
+- **Output Files**: Output a number of files that can be leveraged for further currency analytics.
 - **Interactive Design**: Functional Drop down to choose the rate the user is interested in.
 
 ---
