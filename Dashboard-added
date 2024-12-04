@@ -1,0 +1,98 @@
+import dash
+from dash import dcc, html
+from dash.dependencies import Input, Output
+import pandas as pd
+import plotly.express as px
+
+# Load data
+latest_rates = pd.read_csv('latest_rates_df.csv')  # Ensure the file exists
+historical_rates = pd.read_csv('historical_exchange_data.csv')  # Ensure the file exists
+
+# Initialize Dash app
+app = dash.Dash(__name__)
+
+# App layout
+app.layout = html.Div(style={'font-family': 'Arial, sans-serif', 'margin': '20px'}, children=[
+    # Header Section
+    html.Div([
+        html.H1("Exchange", style={'text-align': 'center', 'font-size': '36px', 'margin-bottom': '10px'})
+    ]),
+
+    # Dropdowns and Conversion Section
+    html.Div([
+        html.Div([
+            html.Label("Select Base Currency:"),
+            dcc.Dropdown(
+                id='base-currency',
+                options=[{'label': currency, 'value': currency} for currency in latest_rates['symbol'].unique()],
+                value='USD',
+                style={'width': '80%'}
+            ),
+            html.Label("Select Target Currency:"),
+            dcc.Dropdown(
+                id='target-currency',
+                options=[{'label': currency, 'value': currency} for currency in latest_rates['symbol'].unique()],
+                value='INR',
+                style={'width': '80%'}
+            ),
+        ], style={'width': '30%', 'display': 'inline-block', 'vertical-align': 'top', 'padding': '20px'}),
+
+        html.Div([
+            html.H3(id='converted-amount', style={'text-align': 'center', 'font-size': '24px'}),
+            html.P(id='conversion-rate', style={'text-align': 'center', 'font-size': '14px', 'color': 'gray'})
+        ], style={'width': '40%', 'display': 'inline-block', 'vertical-align': 'top', 'text-align': 'center'}),
+    ]),
+
+    # Line Chart Section
+    html.Div([
+        dcc.Graph(id='line-chart')
+    ], style={'margin-top': '20px'}),
+
+    # Statistics Section
+    html.Div([
+        html.Div([
+            html.H3("Statistics", style={'font-size': '18px'}),
+            html.P(id='high-rate', style={'font-size': '16px', 'margin-bottom': '5px'}),
+            html.P(id='low-rate', style={'font-size': '16px', 'margin-bottom': '5px'}),
+            html.P(id='avg-rate', style={'font-size': '16px'})
+        ], style={'width': '30%', 'display': 'inline-block', 'text-align': 'center'}),
+    ], style={'margin-top': '20px', 'display': 'flex', 'justify-content': 'center'})
+])
+
+# Callbacks for interactivity
+@app.callback(
+    [Output('converted-amount', 'children'),
+     Output('conversion-rate', 'children'),
+     Output('line-chart', 'figure'),
+     Output('high-rate', 'children'),
+     Output('low-rate', 'children'),
+     Output('avg-rate', 'children')],
+    [Input('base-currency', 'value'),
+     Input('target-currency', 'value')]
+)
+def update_dashboard(base_currency, target_currency):
+    # Conversion logic
+    latest_conversion_rate = latest_rates.loc[latest_rates['symbol'] == target_currency, 'exchange_rate'].values[0]
+    converted_value = f"1 {base_currency} = {latest_conversion_rate:.2f} {target_currency}"
+    conversion_rate_text = f"1 {target_currency} = {1 / latest_conversion_rate:.4f} {base_currency}"
+
+    # Historical data for line chart
+    filtered_data = historical_rates[historical_rates['currency'] == target_currency]
+    fig = px.line(
+        filtered_data,
+        x='date',
+        y='rate',
+        title=f"{base_currency} to {target_currency} Exchange Rate Over Time",
+        labels={'rate': 'Exchange Rate', 'date': 'Date'}
+    )
+
+    # Calculate statistics
+    high = f"High: {filtered_data['rate'].max():.2f}"
+    low = f"Low: {filtered_data['rate'].min():.2f}"
+    avg = f"Avg: {filtered_data['rate'].mean():.2f}"
+
+    return converted_value, conversion_rate_text, fig, high, low, avg
+
+# Run the app
+if __name__ == '__main__':
+    app.run_server(debug=True)
