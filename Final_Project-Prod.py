@@ -174,26 +174,26 @@ def calculate_kpis(df):
 
 
 # Main section to execute the script
+# Main section to execute the script
 if __name__ == "__main__":
+    from datetime import date, timedelta
+
     # Fetch the latest exchange rates
     print("\nFetching latest exchange rates...")
     latest_rates_df = fetch_latest_rates(apikey)
 
-    # Fetch historical exchange rate data
-    print("\nFetching historical exchange rate data...")
-    from datetime import date, timedelta
+    # Generate dynamic date range (last 365 days)
+    end_date = date.today()
+    start_date = end_date - timedelta(days=365)
+    start_date = start_date.strftime("%Y-%m-%d")
+    end_date = end_date.strftime("%Y-%m-%d")
 
-end_date = date.today()
-start_date = end_date - timedelta(days=365)
-
-start_date = start_date.strftime("%Y-%m-%d")
-end_date = end_date.strftime("%Y-%m-%d")
-
-    #start_date = "2020-03-01"
-    #end_date = "2021-03-01"
-
+    # Set parameters
     base_currency = "USD"
     symbols = "EUR,JPY,GBP,AUD,CAD,DEM,INR,MXN,RUB,CNY"
+
+    # Fetch historical exchange rate data
+    print("\nFetching historical exchange rate data...")
     historical_exchange_data = fetch_historical_data(apikey, base_currency, start_date, end_date, symbols)
 
     # Perform analysis if historical data is retrieved
@@ -201,31 +201,27 @@ end_date = end_date.strftime("%Y-%m-%d")
         print("\nBasic Statistics for Historical Data:")
         print(historical_exchange_data)
 
-        # Save Basic Stats Descr to historical_exchange_data.csv
+        # Save DataFrame to CSV
         historical_exchange_data.to_csv("historical_exchange_data.csv", index=True)
-        print("\nBasic Statistics for Historical Data save to 'historical_exchange_data'.")
+        print("\nBasic Statistics for Historical Data saved to 'historical_exchange_data.csv'.")
 
-        # Fetch historical exchange rate data
-        print("\nFetching historical exchange rate data...")
-        start_date = "2020-03-01"
-        end_date = "2021-03-01"
-        base_currency = "USD"
-        symbols = "EUR,JPY,GBP,AUD,CAD,DEM,INR,MXN,RUB,CNY"
+        # Fetch historical trend data
+        print("\nFetching historical trend exchange rate data...")
         historic_trend_data = fetch_historic_trend_data(apikey, base_currency, start_date, end_date, symbols)
 
         if historic_trend_data is not None:
-            print("\nBasic Statistics for Historical Data:")
+            print("\nBasic Statistics for Historical Trend Data:")
             print(historic_trend_data.describe())
 
-            # Save Basic Stats Descr to historic_basic_stats.csv
+            # Save trend stats
             (historic_trend_data.describe()).to_csv("historic_trend_stats.csv", index=True)
-            print("\nBasic Statistics for Historical Data save to 'historic_trend_stats.csv'.")
+            print("\nBasic Statistics for Historical Trend Data saved to 'historic_trend_stats.csv'.")
 
             # Calculate KPIs
             kpi_summary = calculate_kpis(historic_trend_data)
             print("\nKey Performance Indicators (KPIs):")
             print(kpi_summary)
 
-            # Save KPIs to a CSV file
+            # Save KPIs
             kpi_summary.to_csv("kpi_summary.csv", index=True)
             print("\nKPI summary saved to 'kpi_summary.csv'.")
