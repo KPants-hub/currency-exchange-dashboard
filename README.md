@@ -65,6 +65,6 @@ Contributions are welcome! Follow these steps:
 
 ## Contact
 
-For questions or feedback, please reach out to Liz Kent or Kavita Pant.
+For questions or feedback, please reach out to Kavita Pant.
 
 ---
