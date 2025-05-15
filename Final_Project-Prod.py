@@ -181,8 +181,17 @@ if __name__ == "__main__":
 
     # Fetch historical exchange rate data
     print("\nFetching historical exchange rate data...")
-    start_date = "2020-03-01"
-    end_date = "2021-03-01"
+    from datetime import date, timedelta
+
+end_date = date.today()
+start_date = end_date - timedelta(days=365)
+
+start_date = start_date.strftime("%Y-%m-%d")
+end_date = end_date.strftime("%Y-%m-%d")
+
+    #start_date = "2020-03-01"
+    #end_date = "2021-03-01"
+
     base_currency = "USD"
     symbols = "EUR,JPY,GBP,AUD,CAD,DEM,INR,MXN,RUB,CNY"
     historical_exchange_data = fetch_historical_data(apikey, base_currency, start_date, end_date, symbols)
